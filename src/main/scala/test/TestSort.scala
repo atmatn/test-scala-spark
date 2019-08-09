@@ -15,8 +15,10 @@ object TestSort {
     //shellSort(arr)
 
     //quickSort(arr,0,arr.length-1)
-    
+
     mergeSort(arr,0,arr.length-1)
+
+    //heapSort(arr);
 
     arr.foreach[Unit] { (x: Int) => print(x + "\t") }
 
@@ -177,102 +179,105 @@ object TestSort {
 
   }
 
-  def quickSort(arr:Array[Int],leftIndex:Int,rightIndex:Int):Unit={
+  def quickSort(arr: Array[Int], leftIndex: Int, rightIndex: Int): Unit = {
 
-    var a=leftIndex
-    var b=rightIndex
-    val key=arr(leftIndex)//选择第一个元素作为基准
-    while(a<b){
+    var a = leftIndex
 
-      while(a<b&&arr(b) > key){
+    var b = rightIndex
 
-        b-=1
+    val key = arr(leftIndex) //选择第一个元素作为基准
 
-      }
+    while (a < b) {
 
-      if(a<b){
+      while (a < b && arr(b) > key) {
 
-        val temp =arr(a)
-
-        arr(a)=arr(b)
-
-        arr(b)=temp
+        b -= 1
 
       }
 
-      while(leftIndex<rightIndex&&arr(a) < key){
+      if (a < b) {
 
-        a+=1
+        val temp = arr(a)
+
+        arr(a) = arr(b)
+
+        arr(b) = temp
 
       }
 
-      if(a<b){
+      while (leftIndex < rightIndex && arr(a) < key) {
 
-        val temp =arr(a)
+        a += 1
 
-        arr(a)=arr(b)
+      }
 
-        arr(b)=temp
+      if (a < b) {
+
+        val temp = arr(a)
+
+        arr(a) = arr(b)
+
+        arr(b) = temp
 
       }
 
     }
 
-    if(a>leftIndex){
+    if (a > leftIndex) {
 
-      quickSort(arr,leftIndex,a-1)
+      quickSort(arr, leftIndex, a - 1)
 
     }
 
-    if(b<rightIndex){
+    if (b < rightIndex) {
 
-      quickSort(arr,a+1,rightIndex)
+      quickSort(arr, a + 1, rightIndex)
 
     }
 
   }
 
-  def mergeSort(arr: Array[Int],leftIndex:Int,rightIndex:Int):Unit={
+  def mergeSort(arr: Array[Int], leftIndex: Int, rightIndex: Int): Unit = {
 
-    if(leftIndex>=rightIndex)return;
+    if (leftIndex >= rightIndex) return;
 
-    val mid=(leftIndex+rightIndex)/2
+    val mid = (leftIndex + rightIndex) / 2
 
-    mergeSort(arr,leftIndex,mid)
+    mergeSort(arr, leftIndex, mid-1)
 
-    mergeSort(arr,mid+1,rightIndex)
+    mergeSort(arr, mid + 1, rightIndex)
 
-    merge(arr,leftIndex,mid+1,rightIndex)
+    merge(arr, leftIndex, mid, rightIndex)
 
   }
 
-  def merge(arr: Array[Int],leftIndex:Int,midIndex:Int,rightIndex:Int):Unit={
+  def merge(arr: Array[Int], leftIndex: Int, midIndex: Int, rightIndex: Int): Unit = {
 
     //创建两个临时数组并初始化
-    val left=new Array[Int](midIndex-leftIndex)
+    val left = new Array[Int](midIndex - leftIndex)
 
-    val right=new Array[Int](rightIndex-midIndex)
+    val right = new Array[Int](rightIndex - midIndex)
 
-    for(i<-0 to left.length-1){
+    for (i <- 0 to left.length - 1) {
 
-      left(i)=arr(i)
-
-    }
-
-    for(i<-midIndex to right.length-1){
-
-      right(i-midIndex)=arr(i)
+      left(i) = arr(i)
 
     }
 
-    var l=0
+    for (i <- midIndex to right.length - 1) {
 
-    var r=0
+      right(i - midIndex) = arr(i)
 
-    var target=leftIndex //从arr的第一个元素开始，把比较的结果写入
+    }
+
+    var l = 0
+
+    var r = 0
+
+    var target = leftIndex //从arr的第一个元素开始，把比较的结果写入
 
     //进行比较
-    while(l<left.length&&r<right.length) {
+    while (l < left.length && r < right.length) {
 
       if (left(l) > right(r)) {
 
@@ -282,13 +287,13 @@ object TestSort {
 
         target += 1
 
-      }else{
+      } else {
 
         arr(target) = right(l)
 
-        l+=1
+        l += 1
 
-        target+=1
+        target += 1
 
       }
 
@@ -297,9 +302,9 @@ object TestSort {
 
       arr(target) = left(l);
 
-      l+=1;
+      l += 1;
 
-      target+=1;
+      target += 1;
 
     }
 
@@ -307,9 +312,74 @@ object TestSort {
 
       arr(target) = right(r);
 
-      r+=1;
+      r += 1;
 
-      target+=1;
+      target += 1;
+
+    }
+
+  }
+
+  def heapSort(arr: Array[Int]): Unit = {
+
+    for (i <- 0 to arr.length) {
+
+      if (arr.length - i - 1 >= 1) {
+
+        findMaxHeapSort(arr, arr.length - i)
+
+      }
+
+    }
+
+  }
+
+  def findMaxHeapSort(arr: Array[Int], size: Int): Unit = {
+
+    val finallyParentNode = (size - 2) / 2 //找出最后一个父节点
+
+    for (i <- (0 to finallyParentNode).reverse) {
+
+      createHeap(arr, i, size)
+
+    }
+
+    val temp = arr(0)
+
+    arr(0) = arr(size - 1)
+
+    arr(size - 1) = temp
+
+  }
+
+  def createHeap(arr: Array[Int], rootNode: Int, size: Int): Unit = {
+    //每次找出最大值
+
+    val leftNode = rootNode * 2 + 1
+
+    val rightNode = rootNode * 2 + 2
+
+    var max = rootNode //根节点为最大值
+
+    if (arr(leftNode) > arr(max)) {
+
+      max = leftNode
+
+    }
+
+    if (rightNode < size && arr(rightNode) > arr(max)) {
+
+      max = rightNode
+
+    }
+
+    if (max != rootNode) {
+
+      val temp = arr(max)
+
+      arr(max) = arr(rootNode)
+
+      arr(rootNode) = temp
 
     }
 
